@@ -35,11 +35,15 @@ sub update_archives($$$) {
 			next if $member->isDirectory();
 			my $member_filename = $member->fileName();
 			my $contents = $zip->contents($member);
-			$contents = filter($contents, $command);
-			if (defined($contents)) {
-				info("Updating $filename: $member_filename\n");
-				$zip->contents($member, $contents);
-				$changed = 1;
+			my $filtered = filter($contents, $command);
+			if (defined($filtered)) {
+				if ($filtered eq $contents) {
+					info("Unchanged $filename: $member_filename\n");
+				} else {
+					info("Updating $filename: $member_filename\n");
+					$zip->contents($member, $filtered);
+					$changed = 1;
+				}
 			} else {
 				error("Not updating $filename: $member_filename\n");
 				++$error_count;
