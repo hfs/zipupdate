@@ -1,0 +1,97 @@
+=pod
+
+=head1 NAME
+
+zipupdate - Update .zip archives in-place
+
+=head1 SYNOPSIS
+
+zipupdate.pl [--match "\.xml"] --command <filter> *.zip
+
+=head1 DESCRIPTION
+
+This program acts on one or more .zip archives. For each contained file whose
+name matches a given pattern, the file content is filtered by an external
+command and written back to the .zip archive.
+
+=head1 ARGUMENTS
+
+=over 4
+
+=item B<-h, --help>
+
+Print program help and exit
+
+=item B<-v, --verbose>
+
+Print output about every performed operation.
+
+=item B<-c, --command> filter-command
+
+Command line with arguments to filter files through. The command is expected to
+accept input on stdin and write output to stdout. The command is interpreted by
+a shell and may contain pipes etc.
+
+=item B<-m, --match> regex
+
+Optional argument: A regular expression that describes which inner files of the
+.zip archives to modify. It is matched against full file names and paths of the
+contained files. The forward slash "/" is used as directory delimiter. If not
+given, all files are matched.
+
+=back
+
+=head1 EXAMPLES
+
+=head2 How to update .zip files full of .xml files
+
+Assume you have a number zip archives that contain a tree of XML files and you
+want to make systematic changes in all of them.
+
+I<xmlstarlet> is a command line tool to alter XML files and is well suited to
+add attributes, rename elements etc based on XPath expressions.
+
+=over 4
+
+=item B<Adding an attribute to a certain element>
+
+  find . -name "*.zip" -print0 | xargs -0 zipupdate.pl \
+    --match "directoryname/.*\.xml" --command \
+    "xmlstarlet edit -P -S --insert //MatchingElement --type attr --name newattribute --value value"
+
+=item B<Removing an attribute from all nodes>
+
+  find . -name "*.zip" -print0 | xargs -0 zipupdate.pl \
+    --match "\.xml" --command "xmlstarlet edit -P -S --delete //@version"
+
+=item B<Adding a new child element>
+
+  find . -name "*.zip" -print0 | xargs -0 zipupdate.pl \
+    --match "\.xml" --command \
+    "xmlstarlet edit -P -S --subnode /RootElement/MainElement --type elem --name DetailElement --value ''"
+
+=back
+
+=head2 Encoding conversion
+
+=over 4
+
+=item B<Converting XML files>
+
+The I<command> is interpreted by a shell and you can use pipes:
+
+  find . -name "*.zip" -print0 | xargs -0 zipupdate.pl \
+    --match "\.xml" --command \
+    'recode iso-8859-1..utf8 | sed -e "s/\(<?xml version=\"1.0\" encoding=\"\)iso-8859-1\(\"?>\)/\1utf-8\2/"'
+
+=back
+
+=head1 SEE ALSO
+
+=over 4
+
+=item I<http://xmlstar.sourceforge.net/>
+
+XMLStarlet Command Line XML Toolkit
+
+=back
