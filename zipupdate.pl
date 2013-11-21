@@ -174,15 +174,20 @@ add attributes, rename elements etc based on XPath expressions.
 
 =item B<Adding an attribute to a certain element>
 
-find . -name "*.zip" -print0 | xargs -0 zipupdate.pl --match "directoryname/.*\.xml" --command "xmlstarlet edit -P -S --insert //MatchingElement --type attr --name newattribute --value value"
+  find . -name "*.zip" -print0 | xargs -0 zipupdate.pl \
+    --match "directoryname/.*\.xml" --command \
+    "xmlstarlet edit -P -S --insert //MatchingElement --type attr --name newattribute --value value"
 
 =item B<Removing an attribute from all nodes>
 
-find . -name "*.zip" -print0 | xargs -0 zipupdate.pl --match "\.xml" --command "xmlstarlet edit -P -S --delete //@version"
+  find . -name "*.zip" -print0 | xargs -0 zipupdate.pl \
+    --match "\.xml" --command "xmlstarlet edit -P -S --delete //@version"
 
 =item B<Adding a new child element>
 
-find . -name "*.zip" -print0 | xargs -0 zipupdate.pl --match "\.xml" --command "xmlstarlet edit -P -S --subnode /RootElement/MainElement --type elem --name DetailElement --value ''"
+  find . -name "*.zip" -print0 | xargs -0 zipupdate.pl \
+    --match "\.xml" --command \
+    "xmlstarlet edit -P -S --subnode /RootElement/MainElement --type elem --name DetailElement --value ''"
 
 =back
 
@@ -192,7 +197,11 @@ find . -name "*.zip" -print0 | xargs -0 zipupdate.pl --match "\.xml" --command "
 
 =item B<Converting XML files>
 
-find . -name "*.zip" -print0 | xargs -0 zipupdate.pl --match "\.xml" --command 'recode iso-8859-1..utf8 | sed -e "s/\(<?xml version=\"1.0\" encoding=\"\)iso-8859-1\(\"?>\)/\1utf-8\2/"'
+The I<command> is interpreted by a shell and you can use pipes:
+
+  find . -name "*.zip" -print0 | xargs -0 zipupdate.pl \
+    --match "\.xml" --command \
+    'recode iso-8859-1..utf8 | sed -e "s/\(<?xml version=\"1.0\" encoding=\"\)iso-8859-1\(\"?>\)/\1utf-8\2/"'
 
 =back
 
