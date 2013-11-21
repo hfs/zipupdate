@@ -162,9 +162,11 @@ given, all files are matched.
 
 =head1 EXAMPLES
 
-=head2 How to update NinJo favorites
+=head2 How to update .zip files full of .xml files
 
-NinJo favorites are stores as zip archives that contain a tree of XML files.
+Assume you have a number zip archives that contain a tree of XML files and you
+want to make systematic changes in all of them.
+
 I<xmlstarlet> is a command line tool to alter XML files and is well suited to
 add attributes, rename elements etc based on XPath expressions.
 
@@ -172,15 +174,15 @@ add attributes, rename elements etc based on XPath expressions.
 
 =item B<Adding an attribute to a certain element>
 
-find . -name "*.zip" -print0 | xargs -0 zipupdate.pl --match "ninjo\.client\.foo/.*\.xml" --command "xmlstarlet edit -P -S --insert //FeatureCfg --type attr --name newname --value value"
+find . -name "*.zip" -print0 | xargs -0 zipupdate.pl --match "directoryname/.*\.xml" --command "xmlstarlet edit -P -S --insert //MatchingElement --type attr --name newattribute --value value"
 
 =item B<Removing an attribute from all nodes>
 
-find . -name "*.zip" -print0 | xargs -0 zipupdate.pl --match "\.xml" --command "xmlstarlet edit -P -S --delete //@i_version"
+find . -name "*.zip" -print0 | xargs -0 zipupdate.pl --match "\.xml" --command "xmlstarlet edit -P -S --delete //@version"
 
 =item B<Adding a new child element>
 
-find . -name "*.zip" -print0 | xargs -0 zipupdate.pl --match "\.xml" --command "xmlstarlet edit -P -S --subnode /MainCfg/SubCfg --type elem --name DetailCfg --value ''"
+find . -name "*.zip" -print0 | xargs -0 zipupdate.pl --match "\.xml" --command "xmlstarlet edit -P -S --subnode /RootElement/MainElement --type elem --name DetailElement --value ''"
 
 =back
 
